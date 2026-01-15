@@ -10,3 +10,4 @@ node_modules
 .devcontainer
 .vscode
 .venv
+.mypy_cache

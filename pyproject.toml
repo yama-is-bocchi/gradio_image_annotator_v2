@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gradio_image_annotation_v2"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Gradio component that can be used to annotate images with bounding boxes and point."
 readme = "README.md"
 license = "MIT"
@@ -64,3 +64,7 @@ artifacts = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["/backend/gradio_image_annotation_v2"]
+
+[project.urls]
+Homepage = "https://github.com/yama-is-bocchi/gradio_image_annotator_v2"
+Repository = "https://github.com/yama-is-bocchi/gradio_image_annotator_v2"
