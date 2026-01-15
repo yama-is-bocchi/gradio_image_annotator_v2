@@ -1,7 +1,6 @@
 
 # `gradio_image_annotation_v2`
-<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.1.0%20-%20orange">  
-
+<a href="https://pypi.org/project/gradio-image-annotation-v2/" target="_blank"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/gradio_image_annotation_v2"></a>  
 A Gradio component that can be used to annotate images with bounding boxes and point.
 
 This repository is an improved version of https://github.com/edgarGracia/gradio_image_annotator.

@@ -21,7 +21,7 @@ with gr.Blocks(
 # `gradio_image_annotation_v2`
 
 <div style="display: flex; gap: 7px;">
-<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.1.0%20-%20orange">  
+<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.1.1%20-%20orange">  
 </div>
 
 A Gradio component that can be used to annotate images with bounding boxes and point.
