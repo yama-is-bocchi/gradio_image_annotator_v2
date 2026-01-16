@@ -470,9 +470,11 @@
 		const rect = canvas.getBoundingClientRect();
 		const x =
 			(event.clientX - rect.left - canvasWindow.offsetX) /
+			scaleFactor /
 			canvasWindow.scale;
 		const y =
 			(event.clientY - rect.top - canvasWindow.offsetY) /
+			scaleFactor /
 			canvasWindow.scale;
 		let color;
 		if (choicesColors.length > 0) {

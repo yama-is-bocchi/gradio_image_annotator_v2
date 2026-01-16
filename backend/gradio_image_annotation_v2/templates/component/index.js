@@ -4066,10 +4066,10 @@ function P1(i, e, t) {
       Z = Y, t(16, Z), t(7, m), t(14, F), t(15, $);
     });
   }
-  const te = () => {
+  const ne = () => {
     s("clear_status");
   };
-  function ne(Y) {
+  function ee(Y) {
     Fs[Y ? "unshift" : "push"](() => {
       y = Y, t(13, y);
     });
@@ -4124,8 +4124,8 @@ function P1(i, e, t) {
     o,
     l,
     oe,
-    te,
-    ne
+    ne,
+    ee
   ];
 }
 class U1 extends k1 {
@@ -5433,10 +5433,10 @@ function Hh(i, e, t) {
   function oe(E) {
     ln.call(this, i, E);
   }
-  function te(E) {
+  function ne(E) {
     ln.call(this, i, E);
   }
-  function ne(E) {
+  function ee(E) {
     ln.call(this, i, E);
   }
   function Y(E) {
@@ -5484,8 +5484,8 @@ function Hh(i, e, t) {
     X,
     U,
     oe,
-    te,
     ne,
+    ee,
     Y,
     ae
   ];
@@ -6106,28 +6106,28 @@ function Qo(i, e) {
 }
 function Mm(i, e, t) {
   var n = this && this.__awaiter || function(A, M, X, U) {
-    function oe(te) {
-      return te instanceof X ? te : new X(function(ne) {
-        ne(te);
+    function oe(ne) {
+      return ne instanceof X ? ne : new X(function(ee) {
+        ee(ne);
       });
     }
-    return new (X || (X = Promise))(function(te, ne) {
+    return new (X || (X = Promise))(function(ne, ee) {
       function Y(P) {
         try {
           E(U.next(P));
         } catch (ie) {
-          ne(ie);
+          ee(ie);
         }
       }
       function ae(P) {
         try {
           E(U.throw(P));
         } catch (ie) {
-          ne(ie);
+          ee(ie);
         }
       }
       function E(P) {
-        P.done ? te(P.value) : oe(P.value).then(Y, ae);
+        P.done ? ne(P.value) : oe(P.value).then(Y, ae);
       }
       E((U = U.apply(A, M || [])).next());
     });
@@ -6182,9 +6182,9 @@ function Mm(i, e, t) {
           var U;
           if (X.target) {
             let oe = new File([A], "sample." + y.substring(6));
-            const te = yield Nr([oe]);
-            let ne = ((U = yield f(te, c)) === null || U === void 0 ? void 0 : U.filter(Boolean))[0];
-            m("capture", ne), m("stop_recording");
+            const ne = yield Nr([oe]);
+            let ee = ((U = yield f(ne, c)) === null || U === void 0 ? void 0 : U.filter(Boolean))[0];
+            m("capture", ee), m("stop_recording");
           }
         });
       }, M.readAsDataURL(A);
@@ -9418,7 +9418,7 @@ function cp(i, e, t) {
   C === null && (C = v);
   let w, I, R, N = null, F = -1, $ = -1, Z = null, ue = r.drag, A = /* @__PURE__ */ new Map(), M = new np(J, A);
   f !== null && f.boxes.length == 0 && f.points.length == 0 && (ue = r.creation);
-  let X = 0, U = 0, oe = 0, te = 0, ne = 1, Y = 0, ae = 0, E = !1, P = !1, ie = !1, re = !1, _e = q, D = { label: "", color: "" }, Te = "", $e = "", ce = { x: 0, y: 0, distance: 0 };
+  let X = 0, U = 0, oe = 0, ne = 0, ee = 1, Y = 0, ae = 0, E = !1, P = !1, ie = !1, re = !1, _e = q, D = { label: "", color: "" }, Te = "", $e = "", ce = { x: 0, y: 0, distance: 0 };
   const he = rp();
   function J() {
     if (R) {
@@ -9567,17 +9567,17 @@ function cp(i, e, t) {
     M.offsetX = G - qt * j, M.offsetY = fe - ft * j, M.scale = j, J();
   }
   function Bl(k) {
-    const W = w.getBoundingClientRect(), H = (k.clientX - W.left - M.offsetX) / M.scale, j = (k.clientY - W.top - M.offsetY) / M.scale;
+    const W = w.getBoundingClientRect(), H = (k.clientX - W.left - M.offsetX) / ee / M.scale, j = (k.clientY - W.top - M.offsetY) / ee / M.scale;
     let K;
     p.length > 0 ? K = Nt(p[0]) : S ? f.boxes.length > 0 ? K = f.boxes[0].color : K = Je[0] : K = Je[f.boxes.length % Je.length];
-    let G = new vo(J, is, M, A, X, U, oe, te, "", H, j, H, j, K, c, u, d, h, g);
+    let G = new vo(J, is, M, A, X, U, oe, ne, "", H, j, H, j, K, c, u, d, h, g);
     G.startCreating(k, W.left, W.top), S ? t(33, f.boxes = [G], f) : t(33, f.boxes = [G, ...f.boxes], f), Ke(0), J(), he("change");
   }
   function Ml(k) {
     const W = w.getBoundingClientRect(), H = (k.clientX - W.left - M.offsetX) / M.scale, j = (k.clientY - W.top - M.offsetY) / M.scale;
     let K;
     p.length > 0 ? K = Nt(p[0]) : S ? f.points.length > 0 ? K = f.points[0].color : K = Je[0] : K = Je[f.points.length % Je.length];
-    const G = new ko(J, M, A, X, U, oe, te, "", H, j, K, 0.7, Math.max(4, d / 2), ne);
+    const G = new ko(J, M, A, X, U, oe, ne, "", H, j, K, 0.7, Math.max(4, d / 2), ee);
     S ? t(33, f.points = [G], f) : t(33, f.points = [G, ...f.points], f), tn(0), G.startDrag(k), re = !0, J(), he("change");
   }
   function ti(k) {
@@ -9669,22 +9669,22 @@ function cp(i, e, t) {
   }
   function ii() {
     if (w) {
-      if (ne = 1, t(8, w.width = w.clientWidth, w), M.setRotatedImage(N), N !== null) {
+      if (ee = 1, t(8, w.width = w.clientWidth, w), M.setRotatedImage(N), N !== null) {
         if (M.imageRotatedWidth > w.width)
-          ne = w.width / M.imageRotatedWidth, Y = Math.round(M.imageRotatedWidth * ne), ae = Math.round(M.imageRotatedHeight * ne), X = 0, U = 0, oe = Y, te = ae, t(8, w.height = ae, w);
+          ee = w.width / M.imageRotatedWidth, Y = Math.round(M.imageRotatedWidth * ee), ae = Math.round(M.imageRotatedHeight * ee), X = 0, U = 0, oe = Y, ne = ae, t(8, w.height = ae, w);
         else {
           Y = M.imageRotatedWidth, ae = M.imageRotatedHeight;
           var k = (w.width - Y) / 2;
-          X = k, U = 0, oe = k + Y, te = ae, t(8, w.height = ae, w);
+          X = k, U = 0, oe = k + Y, ne = ae, t(8, w.height = ae, w);
         }
         M.imageWidth = Y, M.imageHeight = ae;
       } else
-        X = 0, U = 0, oe = w.width, te = w.height, t(8, w.height = w.clientHeight, w);
-      if (M.resize(w.width, w.height, X, U), oe > 0 && te > 0) {
+        X = 0, U = 0, oe = w.width, ne = w.height, t(8, w.height = w.clientHeight, w);
+      if (M.resize(w.width, w.height, X, U), oe > 0 && ne > 0) {
         for (const W of f.boxes)
-          W.canvasXmin = X, W.canvasYmin = U, W.canvasXmax = oe, W.canvasYmax = te, W.setScaleFactor(ne);
+          W.canvasXmin = X, W.canvasYmin = U, W.canvasXmax = oe, W.canvasYmax = ne, W.setScaleFactor(ee);
         for (const W of f.points)
-          W.canvasXmin = X, W.canvasYmin = U, W.canvasXmax = oe, W.canvasYmax = te, W.setScaleFactor(ne);
+          W.canvasXmin = X, W.canvasYmin = U, W.canvasXmax = oe, W.canvasYmax = ne, W.setScaleFactor(ee);
       }
       J(), he("change");
     }
@@ -9696,7 +9696,7 @@ function cp(i, e, t) {
       if (!(W instanceof vo)) {
         const H = W;
         let j = "", K = "";
-        Object.prototype.hasOwnProperty.call(H, "color") ? (j = H.color, Array.isArray(j) && j.length === 3 && (j = `rgb(${j[0]}, ${j[1]}, ${j[2]})`)) : j = Je[k % Je.length], Object.prototype.hasOwnProperty.call(H, "label") && (K = H.label), W = new vo(J, is, M, A, X, U, oe, te, K, H.xmin, H.ymin, H.xmax, H.ymax, j, c, u, d, h, g), t(33, f.boxes[k] = W, f);
+        Object.prototype.hasOwnProperty.call(H, "color") ? (j = H.color, Array.isArray(j) && j.length === 3 && (j = `rgb(${j[0]}, ${j[1]}, ${j[2]})`)) : j = Je[k % Je.length], Object.prototype.hasOwnProperty.call(H, "label") && (K = H.label), W = new vo(J, is, M, A, X, U, oe, ne, K, H.xmin, H.ymin, H.xmax, H.ymax, j, c, u, d, h, g), t(33, f.boxes[k] = W, f);
       }
     }
   }
@@ -9706,7 +9706,7 @@ function cp(i, e, t) {
       if (!(W instanceof ko)) {
         const H = W;
         let j = "", K = "";
-        Object.prototype.hasOwnProperty.call(H, "color") ? (j = H.color, Array.isArray(j) && j.length === 3 && (j = `rgb(${j[0]}, ${j[1]}, ${j[2]})`)) : j = Je[k % Je.length], Object.prototype.hasOwnProperty.call(H, "label") && (K = H.label), W = new ko(J, M, A, X, U, oe, te, K, H.x, H.y, j, 0.7, Math.max(4, d / 2), ne), t(33, f.points[k] = W, f);
+        Object.prototype.hasOwnProperty.call(H, "color") ? (j = H.color, Array.isArray(j) && j.length === 3 && (j = `rgb(${j[0]}, ${j[1]}, ${j[2]})`)) : j = Je[k % Je.length], Object.prototype.hasOwnProperty.call(H, "label") && (K = H.label), W = new ko(J, M, A, X, U, oe, ne, K, H.x, H.y, j, 0.7, Math.max(4, d / 2), ee), t(33, f.points[k] = W, f);
       }
     }
   }
@@ -10105,7 +10105,7 @@ const {
   safe_not_equal: Xp,
   space: rn,
   toggle_class: Ja,
-  transition_in: ee,
+  transition_in: te,
   transition_out: de,
   update_slot_base: Yp
 } = window.__gradio__svelte__internal, { createEventDispatcher: Ap, tick: Ip } = window.__gradio__svelte__internal;
@@ -10142,7 +10142,7 @@ function Qa(i) {
       8388608 && (o.$$scope = { dirty: l, ctx: n }), e.$set(o);
     },
     i(n) {
-      t || (ee(e.$$.fragment, n), t = !0);
+      t || (te(e.$$.fragment, n), t = !0);
     },
     o(n) {
       de(e.$$.fragment, n), t = !1;
@@ -10176,7 +10176,7 @@ function Hp(i) {
       n[8]("common.download")), e.$set(o);
     },
     i(n) {
-      t || (ee(e.$$.fragment, n), t = !0);
+      t || (te(e.$$.fragment, n), t = !0);
     },
     o(n) {
       de(e.$$.fragment, n), t = !1;
@@ -10227,7 +10227,7 @@ function xa(i) {
       n[1]), e.$set(o);
     },
     i(n) {
-      t || (ee(e.$$.fragment, n), t = !0);
+      t || (te(e.$$.fragment, n), t = !0);
     },
     o(n) {
       de(e.$$.fragment, n), t = !1;
@@ -10254,7 +10254,7 @@ function er(i) {
     },
     p: Rp,
     i(l) {
-      n || (ee(t.$$.fragment, l), n = !0);
+      n || (te(t.$$.fragment, l), n = !0);
     },
     o(l) {
       de(t.$$.fragment, l), n = !1;
@@ -10305,7 +10305,7 @@ function tr(i) {
       );
     },
     i(l) {
-      e || (ee(n, l), e = !0);
+      e || (te(n, l), e = !0);
     },
     o(l) {
       de(n, l), e = !1;
@@ -10330,12 +10330,12 @@ function Tp(i) {
     p(l, o) {
       /*value*/
       l[1] === null ? n ? (n.p(l, o), o[0] & /*value*/
-      2 && ee(n, 1)) : (n = tr(l), n.c(), ee(n, 1), n.m(e.parentNode, e)) : n && (cn(), de(n, 1, 1, () => {
+      2 && te(n, 1)) : (n = tr(l), n.c(), te(n, 1), n.m(e.parentNode, e)) : n && (cn(), de(n, 1, 1, () => {
         n = null;
       }), _n());
     },
     i(l) {
-      t || (ee(n), t = !0);
+      t || (te(n), t = !0);
     },
     o(l) {
       de(n), t = !1;
@@ -10402,7 +10402,7 @@ function nr(i) {
       n[32]), e.$set(o);
     },
     i(n) {
-      t || (ee(e.$$.fragment, n), t = !0);
+      t || (te(e.$$.fragment, n), t = !0);
     },
     o(n) {
       de(e.$$.fragment, n), t = !1;
@@ -10553,7 +10553,7 @@ function ir(i) {
         );
       },
       i(r) {
-        l || (ee(t.$$.fragment, r), l = !0);
+        l || (te(t.$$.fragment, r), l = !0);
       },
       o(r) {
         de(t.$$.fragment, r), l = !1;
@@ -10602,7 +10602,7 @@ function lr(i) {
         s[0], dl(() => t = !1)), e.$set(a);
       },
       i(s) {
-        n || (ee(e.$$.fragment, s), n = !0);
+        n || (te(e.$$.fragment, s), n = !0);
       },
       o(s) {
         de(e.$$.fragment, s), n = !1;
@@ -10722,18 +10722,18 @@ function jp(i) {
       w[2] || "Image Annotator"), e.$set(R), /*showDownloadButton*/
       w[10] && /*value*/
       w[1] !== null ? p ? (p.p(w, I), I[0] & /*showDownloadButton, value*/
-      1026 && ee(p, 1)) : (p = Qa(w), p.c(), ee(p, 1), p.m(n, l)) : p && (cn(), de(p, 1, 1, () => {
+      1026 && te(p, 1)) : (p = Qa(w), p.c(), te(p, 1), p.m(n, l)) : p && (cn(), de(p, 1, 1, () => {
         p = null;
       }), _n()), /*showShareButton*/
       w[9] && /*value*/
       w[1] !== null ? v ? (v.p(w, I), I[0] & /*showShareButton, value*/
-      514 && ee(v, 1)) : (v = xa(w), v.c(), ee(v, 1), v.m(n, o)) : v && (cn(), de(v, 1, 1, () => {
+      514 && te(v, 1)) : (v = xa(w), v.c(), te(v, 1), v.m(n, o)) : v && (cn(), de(v, 1, 1, () => {
         v = null;
       }), _n()), /*showClearButton*/
       w[11] && /*value*/
       w[1] !== null && /*interactive*/
       w[7] ? b ? (b.p(w, I), I[0] & /*showClearButton, value, interactive*/
-      2178 && ee(b, 1)) : (b = er(w), b.c(), ee(b, 1), b.m(n, null)) : b && (cn(), de(b, 1, 1, () => {
+      2178 && te(b, 1)) : (b = er(w), b.c(), te(b, 1), b.m(n, null)) : b && (cn(), de(b, 1, 1, () => {
         b = null;
       }), _n());
       const N = {};
@@ -10761,11 +10761,11 @@ function jp(i) {
       w[31], dl(() => u = !1)), _.$set(N), /*value*/
       w[1] === null && /*active_source*/
       w[0] === "webcam" ? y ? (y.p(w, I), I[0] & /*value, active_source*/
-      3 && ee(y, 1)) : (y = nr(w), y.c(), ee(y, 1), y.m(a, h)) : y && (cn(), de(y, 1, 1, () => {
+      3 && te(y, 1)) : (y = nr(w), y.c(), te(y, 1), y.m(a, h)) : y && (cn(), de(y, 1, 1, () => {
         y = null;
       }), _n()), /*value*/
       w[1] !== null ? q ? (q.p(w, I), I[0] & /*value*/
-      2 && ee(q, 1)) : (q = ir(w), q.c(), ee(q, 1), q.m(a, null)) : q && (cn(), de(q, 1, 1, () => {
+      2 && te(q, 1)) : (q = ir(w), q.c(), te(q, 1), q.m(a, null)) : q && (cn(), de(q, 1, 1, () => {
         q = null;
       }), _n()), I[0] & /*sources, value, interactive*/
       146 && (f = /*sources*/
@@ -10773,12 +10773,12 @@ function jp(i) {
       w[4].includes("clipboard")) && /*value*/
       w[1] === null && /*interactive*/
       w[7]), f ? L ? (L.p(w, I), I[0] & /*sources, value, interactive*/
-      146 && ee(L, 1)) : (L = lr(w), L.c(), ee(L, 1), L.m(r, null)) : L && (cn(), de(L, 1, 1, () => {
+      146 && te(L, 1)) : (L = lr(w), L.c(), te(L, 1), L.m(r, null)) : L && (cn(), de(L, 1, 1, () => {
         L = null;
       }), _n());
     },
     i(w) {
-      m || (ee(e.$$.fragment, w), ee(p), ee(v), ee(b), ee(_.$$.fragment, w), ee(y), ee(q), ee(L), m = !0);
+      m || (te(e.$$.fragment, w), te(p), te(v), te(b), te(_.$$.fragment, w), te(y), te(q), te(L), m = !0);
     },
     o(w) {
       de(e.$$.fragment, w), de(p), de(v), de(b), de(_.$$.fragment, w), de(y), de(q), de(L), m = !1;
@@ -10819,15 +10819,15 @@ function Fp(i, e, t) {
   };
   let { value: s } = e, { label: r = void 0 } = e, { show_label: a } = e, { sources: _ = ["upload", "webcam", "clipboard"] } = e, { selectable: c = !1 } = e, { root: u } = e, { interactive: d } = e, { i18n: h } = e, { showShareButton: g } = e, { showDownloadButton: f } = e, { showClearButton: m } = e, { boxesAlpha: p } = e, { labelList: v } = e, { labelColors: b } = e, { boxMinSize: z } = e, { handleSize: S } = e, { height: C } = e, { width: y } = e, { boxThickness: q } = e, { disableEditBoxes: L } = e, { singleBox: w } = e, { showRemoveButton: I } = e, { handlesCursor: R } = e, { boxSelectedThickness: N } = e, { max_file_size: F = null } = e, { cli_upload: $ } = e, { stream_handler: Z } = e, { useDefaultLabel: ue } = e, { enableKeyboardShortcuts: A } = e, M, X = !1, { active_source: U = null } = e;
   function oe({ detail: B }) {
-    t(1, s = new Ga()), t(1, s.image = B, s), ne("upload");
+    t(1, s = new Ga()), t(1, s.image = B, s), ee("upload");
   }
-  function te(B) {
+  function ne(B) {
     return o(this, void 0, void 0, function* () {
       const It = yield M.load_files([new File([B], "webcam.png")]), yt = (It == null ? void 0 : It[0]) || null;
-      yt ? (t(1, s = new Ga()), t(1, s.image = yt, s)) : t(1, s = null), yield Ip(), ne("change");
+      yt ? (t(1, s = new Ga()), t(1, s.image = yt, s)) : t(1, s = null), yield Ip(), ee("change");
     });
   }
-  const ne = Ap();
+  const ee = Ap();
   let Y = !1;
   function ae(B) {
     return o(this, void 0, void 0, function* () {
@@ -10839,7 +10839,7 @@ function Fp(i, e, t) {
     });
   }
   function E() {
-    t(1, s = null), ne("clear"), ne("change");
+    t(1, s = null), ee("clear"), ee("change");
   }
   const P = async (B) => B === null ? "" : `<img src="${await Ed(B.image)}" />`;
   function ie(B) {
@@ -10862,18 +10862,18 @@ function Fp(i, e, t) {
   function $e(B) {
     ci.call(this, i, B);
   }
-  const ce = (B) => te(B.detail), he = (B) => te(B.detail);
+  const ce = (B) => ne(B.detail), he = (B) => ne(B.detail);
   function J(B) {
     ci.call(this, i, B);
   }
   function Ke(B) {
     ci.call(this, i, B);
   }
-  const tn = (B) => te(B.detail);
+  const tn = (B) => ne(B.detail);
   function Bi(B) {
     s = B, t(1, s);
   }
-  const ql = () => ne("change");
+  const ql = () => ee("change");
   function zl(B) {
     U = B, t(0, U), t(4, _);
   }
@@ -10882,7 +10882,7 @@ function Fp(i, e, t) {
   }, i.$$.update = () => {
     i.$$.dirty[0] & /*uploading*/
     1073741824 && X && E(), i.$$.dirty[1] & /*dragging*/
-    1 && ne("drag", Y), i.$$.dirty[0] & /*active_source, sources*/
+    1 && ee("drag", Y), i.$$.dirty[0] & /*active_source, sources*/
     17 && !U && _ && t(0, U = _[0]);
   }, [
     U,
@@ -10919,8 +10919,8 @@ function Fp(i, e, t) {
     Y,
     M,
     oe,
-    te,
     ne,
+    ee,
     ae,
     E,
     n,
@@ -11649,10 +11649,10 @@ function fb(i, e, t) {
   function oe(D) {
     U = D, t(34, U);
   }
-  function te(D) {
+  function ne(D) {
     s = D, t(0, s);
   }
-  const ne = () => M.dispatch("change"), Y = () => M.dispatch("edit"), ae = () => {
+  const ee = () => M.dispatch("change"), Y = () => M.dispatch("edit"), ae = () => {
     M.dispatch("clear");
   }, E = ({ detail: D }) => t(33, X = D), P = () => M.dispatch("upload"), ie = ({ detail: D }) => M.dispatch("select", D), re = ({ detail: D }) => M.dispatch("share", D), _e = ({ detail: D }) => {
     t(1, m = m || {}), t(1, m.status = "error", m), M.dispatch("error", D);
@@ -11696,8 +11696,8 @@ function fb(i, e, t) {
     X,
     U,
     oe,
-    te,
     ne,
+    ee,
     Y,
     ae,
     E,
