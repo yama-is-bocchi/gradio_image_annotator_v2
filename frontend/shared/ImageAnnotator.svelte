@@ -3,7 +3,12 @@
 	import { Download, Image as ImageIcon } from "@gradio/icons";
 	import { DownloadLink } from "@gradio/wasm/svelte";
 	import { uploadToHuggingFace } from "@gradio/utils";
-	import { BlockLabel, IconButton, ShareButton, SelectSource} from "@gradio/atoms";
+	import {
+		BlockLabel,
+		IconButton,
+		ShareButton,
+		SelectSource,
+	} from "@gradio/atoms";
 	import { Upload } from "@gradio/upload";
 	import { Webcam } from "@gradio/image";
 	import type { FileData, Client } from "@gradio/client";
@@ -44,14 +49,65 @@
 	export let useDefaultLabel: boolean;
 	export let enableKeyboardShortcuts: boolean;
 
-	let upload: Upload;
+	type AnnotationShape = "box" | "point";
+	type AnnotationItem = {
+		id: string;
+		label: string;
+		shape: AnnotationShape;
+		coords: string;
+		color: string;
+		isSelected: boolean;
+	};
+	let annotationItems: AnnotationItem[] = [];
+	let annotationTick = 0;
+
+	function formatBoxCoords(box: any) {
+		const xmin = Math.round(box._xmin ?? box.xmin ?? 0);
+		const ymin = Math.round(box._ymin ?? box.ymin ?? 0);
+		const xmax = Math.round(box._xmax ?? box.xmax ?? 0);
+		const ymax = Math.round(box._ymax ?? box.ymax ?? 0);
+		return `xmin:${xmin}, ymin:${ymin}, xmax:${xmax}, ymax:${ymax}`;
+	}
+
+	function formatPointCoords(point: any) {
+		const x = Math.round(point._x ?? point.x ?? 0);
+		const y = Math.round(point._y ?? point.y ?? 0);
+		return `x:${x}, y:${y}`;
+	}
+
+	$: {
+		annotationTick;
+		if (!value) {
+			annotationItems = [];
+		} else {
+			const boxes = value.boxes.map((box, index) => ({
+				id: `box-${index}`,
+				label: box.label?.trim() ? box.label : "(No label)",
+				shape: "box" as AnnotationShape,
+				coords: formatBoxCoords(box),
+				color: box.color ?? "transparent",
+				isSelected: false,
+			}));
+			const points = value.points.map((point, index) => ({
+				id: `point-${index}`,
+				label: point.label?.trim() ? point.label : "(No label)",
+				shape: "point" as AnnotationShape,
+				coords: formatPointCoords(point),
+				color: point.color ?? "transparent",
+				isSelected: false,
+			}));
+			annotationItems = [...boxes, ...points];
+		}
+	}
+
+	let upload: any;
 	let uploading = false;
 	export let active_source: source_type = null;
 
 	function handle_upload({ detail }: CustomEvent<FileData>): void {
 		value = new AnnotatedImageData();
 		value.image = detail;
-		dispatch("upload");
+		dispatch("upload", undefined);
 	}
 
 	async function handle_save(img_blob: Blob | any): Promise<void> {
@@ -73,7 +129,7 @@
 		change: undefined;
 		clear: undefined;
 		drag: boolean;
-		upload?: never;
+		upload?: undefined;
 		select: SelectData;
 	}>();
 
@@ -86,7 +142,7 @@
 	}
 
 	async function handle_select_source(
-		source: (typeof sources)[number]
+		source: (typeof sources)[number],
 	): Promise<void> {
 		switch (source) {
 			case "clipboard":
@@ -95,6 +151,11 @@
 			default:
 				break;
 		}
+	}
+
+	function handleCanvasChange() {
+		annotationTick += 1;
+		dispatch("change");
 	}
 
 	function clear() {
@@ -108,7 +169,10 @@
 
 <div class="icon-buttons">
 	{#if showDownloadButton && value !== null}
-		<DownloadLink href={value.image.url} download={value.image.orig_name || "image"}>
+		<DownloadLink
+			href={value.image.url}
+			download={value.image.orig_name || "image"}
+		>
 			<IconButton Icon={Download} label={i18n("common.download")} />
 		</DownloadLink>
 	{/if}
@@ -127,11 +191,7 @@
 	{/if}
 	{#if showClearButton && value !== null && interactive}
 		<div>
-			<IconButton
-				Icon={Clear}
-				label="Remove Image"
-				on:click={clear}
-			/>
+			<IconButton Icon={Clear} label="Remove Image" on:click={clear} />
 		</div>
 	{/if}
 </div>
@@ -171,28 +231,58 @@
 			/>
 		{/if}
 		{#if value !== null}
-			<div class:selectable class="image-frame">
-				<ImageCanvas
-					bind:value
-					on:change={() => dispatch("change")}
-					{height}
-					{width}
-					{boxesAlpha}
-					{labelList}
-					{labelColors}
-					{boxMinSize}
-					{interactive}
-					{handleSize}
-					{boxThickness}
-					{singleBox}
-					{disableEditBoxes}
-					{showRemoveButton}
-					{handlesCursor}
-					{boxSelectedThickness}
-					{useDefaultLabel}
-					{enableKeyboardShortcuts}
-					src={value.image.url}
-				/>
+			<div class="annotator-layout">
+				<div class:selectable class="image-frame">
+					<ImageCanvas
+						bind:value
+						on:change={handleCanvasChange}
+						{height}
+						{width}
+						{boxesAlpha}
+						{labelList}
+						{labelColors}
+						{boxMinSize}
+						{interactive}
+						{handleSize}
+						{boxThickness}
+						{singleBox}
+						{disableEditBoxes}
+						{showRemoveButton}
+						{handlesCursor}
+						{boxSelectedThickness}
+						{useDefaultLabel}
+						{enableKeyboardShortcuts}
+						src={value.image.url}
+					/>
+				</div>
+				<aside class="annotation-panel" aria-label="Annotations list">
+					<div class="annotation-panel__header">Annotations</div>
+					{#if annotationItems.length === 0}
+						<div class="annotation-panel__empty">
+							No annotations yet.
+						</div>
+					{:else}
+						<ul class="annotation-list">
+							{#each annotationItems as item}
+								<li class="annotation-item">
+									<div class="annotation-item__title">
+										<span
+											class="annotation-item__swatch"
+											style={`background-color: ${item.color};`}
+										></span>
+										{item.label}
+									</div>
+									<div class="annotation-item__meta">
+										Shape: {item.shape}
+									</div>
+									<div class="annotation-item__coords">
+										Coords: {item.coords}
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+				</aside>
 			</div>
 		{/if}
 	</div>
@@ -216,6 +306,75 @@
 	.image-frame {
 		object-fit: cover;
 		width: 100%;
+	}
+
+	.annotator-layout {
+		display: flex;
+		gap: var(--spacing-lg);
+		align-items: flex-start;
+		width: 100%;
+	}
+
+	.annotation-panel {
+		width: 240px;
+		min-width: 200px;
+		border: 1px solid var(--border-color-primary);
+		border-radius: var(--radius-md);
+		background: var(--background-fill-secondary);
+		padding: var(--spacing-lg);
+		color: var(--body-text-color);
+		font-size: var(--text-md);
+	}
+
+	.annotation-panel__header {
+		font-weight: 600;
+		margin-bottom: var(--spacing-md);
+	}
+
+	.annotation-panel__empty {
+		color: var(--neutral-500);
+		font-size: var(--text-sm);
+	}
+
+	.annotation-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-md);
+	}
+
+	.annotation-item {
+		border-radius: var(--radius-md);
+		padding: var(--spacing-md);
+		border: 1px solid transparent;
+		background: var(--background-fill-primary);
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-xs);
+		font-size: var(--text-sm);
+	}
+
+	.annotation-item__title {
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+	}
+
+	.annotation-item__swatch {
+		width: 10px;
+		height: 10px;
+		border-radius: 999px;
+		border: 1px solid var(--border-color-primary);
+		flex-shrink: 0;
+	}
+
+	.annotation-item__meta,
+	.annotation-item__coords {
+		color: var(--neutral-600);
+		font-size: var(--text-xs);
 	}
 
 	.upload-container {

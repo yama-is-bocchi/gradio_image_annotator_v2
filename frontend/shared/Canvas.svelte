@@ -160,6 +160,11 @@
 		}
 	}
 
+	function drawAndNotify() {
+		draw();
+		dispatch("change");
+	}
+
 	function selectBox(index: number) {
 		selectedTarget = index >= 0 ? "box" : null;
 		selectedBox = index;
@@ -505,7 +510,7 @@
 		}
 
 		let box = new Box(
-			draw,
+			drawAndNotify,
 			onBoxFinishCreation,
 			canvasWindow,
 			pointersCache,
@@ -558,7 +563,7 @@
 		}
 
 		const point = new PointShape(
-			draw,
+			drawAndNotify,
 			canvasWindow,
 			pointersCache,
 			canvasXmin,
@@ -836,6 +841,7 @@
 			point.onRotate(op);
 		}
 		draw();
+		dispatch("change");
 	}
 
 	function resize() {
@@ -928,7 +934,7 @@
 					label = rawBox["label"] as string;
 				}
 				box = new Box(
-					draw,
+					drawAndNotify,
 					onBoxFinishCreation,
 					canvasWindow,
 					pointersCache,
@@ -972,7 +978,7 @@
 					label = rawPoint["label"] as string;
 				}
 				point = new PointShape(
-					draw,
+					drawAndNotify,
 					canvasWindow,
 					pointersCache,
 					canvasXmin,
