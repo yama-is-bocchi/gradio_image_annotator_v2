@@ -106,6 +106,7 @@ with gr.Blocks() as demo:
         - ``B``: Create box
         - ``P``: Create point
         - ``D``: Drag mode
+        - ``C``: Clear select element
         - ``E``: Edit selected box (same as double-click a box)
         - ``Delete``: Remove selected box
         - ``Space``: Reset view (zoom/pan)

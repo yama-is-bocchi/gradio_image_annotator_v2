@@ -55,7 +55,7 @@
 	let selectedBox = -1;
 	let selectedPoint = -1;
 	let selectedTarget: "box" | "point" | null = null;
-	let mode: Mode = Mode.drag;
+	let mode: Mode = Mode.creation;
 	let pointersCache: Map<number, PointerEvent> = new Map();
 	let canvasWindow: WindowViewer = new WindowViewer(draw, pointersCache);
 
@@ -512,7 +512,7 @@
 		}
 
 		const key = event.key.toLowerCase();
-		const blockedKeys = new Set(["delete", "b", "d", "e", "p", " "]);
+		const blockedKeys = new Set(["delete", "b", "c", "d", "e", "p", " "]);
 
 		if (blockedKeys.has(key)) {
 			event.preventDefault();
@@ -525,6 +525,9 @@
 				break;
 			case "b":
 				setCreateMode();
+				break;
+			case "c":
+				handleClearSelection();
 				break;
 			case "p":
 				setPointMode();
@@ -718,19 +721,39 @@
 		canvasWindow.startDrag(event);
 	}
 
+	function clearFocusSelection() {
+		if (focusSelectedOnly || selectedAnnotationId) {
+			onClearSelection?.();
+		}
+		selectedAnnotationId = null;
+		focusSelectedOnly = false;
+		selectedInfo = null;
+		lastSelectedAnnotationId = null;
+		selectedTarget = null;
+		selectedBox = -1;
+		selectedPoint = -1;
+		value?.boxes.forEach((box) => box.setSelected(false));
+		value?.points.forEach((point) => point.setSelected(false));
+	}
+
 	function setCreateMode() {
+		clearFocusSelection();
 		mode = Mode.creation;
 		canvas.style.cursor = "crosshair";
+		draw();
 	}
 
 	function setPointMode() {
+		clearFocusSelection();
 		mode = Mode.point;
 		canvas.style.cursor = "crosshair";
+		draw();
 	}
 
 	function setDragMode() {
 		mode = Mode.drag;
 		canvas.style.cursor = "default";
+		draw();
 	}
 
 	function handleClearSelection() {
