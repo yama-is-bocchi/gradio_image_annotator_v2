@@ -60,6 +60,8 @@
 	};
 	let annotationItems: AnnotationItem[] = [];
 	let annotationTick = 0;
+	let selectedAnnotationId: string | null = null;
+	let focusSelectedOnly = false;
 
 	function formatBoxCoords(box: any) {
 		const xmin = Math.round(box._xmin ?? box.xmin ?? 0);
@@ -77,6 +79,7 @@
 
 	$: {
 		annotationTick;
+		selectedAnnotationId;
 		if (!value) {
 			annotationItems = [];
 		} else {
@@ -86,7 +89,7 @@
 				shape: "box" as AnnotationShape,
 				coords: formatBoxCoords(box),
 				color: box.color ?? "transparent",
-				isSelected: false,
+				isSelected: selectedAnnotationId === `box-${index}`,
 			}));
 			const points = value.points.map((point, index) => ({
 				id: `point-${index}`,
@@ -94,9 +97,16 @@
 				shape: "point" as AnnotationShape,
 				coords: formatPointCoords(point),
 				color: point.color ?? "transparent",
-				isSelected: false,
+				isSelected: selectedAnnotationId === `point-${index}`,
 			}));
 			annotationItems = [...boxes, ...points];
+		}
+		if (
+			selectedAnnotationId &&
+			!annotationItems.some((item) => item.id === selectedAnnotationId)
+		) {
+			selectedAnnotationId = null;
+			focusSelectedOnly = false;
 		}
 	}
 
@@ -156,6 +166,31 @@
 	function handleCanvasChange() {
 		annotationTick += 1;
 		dispatch("change");
+	}
+
+	function toggleAnnotationSelection(item: AnnotationItem) {
+		if (selectedAnnotationId === item.id) {
+			selectedAnnotationId = null;
+			focusSelectedOnly = false;
+		} else {
+			selectedAnnotationId = item.id;
+			focusSelectedOnly = true;
+		}
+	}
+
+	function clearAnnotationSelection() {
+		selectedAnnotationId = null;
+		focusSelectedOnly = false;
+	}
+
+	function handleAnnotationKeydown(
+		event: KeyboardEvent,
+		item: AnnotationItem,
+	) {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			toggleAnnotationSelection(item);
+		}
 	}
 
 	function clear() {
@@ -219,6 +254,7 @@
 		{#if value === null && active_source === "webcam"}
 			<Webcam
 				{root}
+				mirror_webcam={false}
 				on:capture={(e) => handle_save(e.detail)}
 				on:stream={(e) => handle_save(e.detail)}
 				on:error
@@ -252,6 +288,9 @@
 						{boxSelectedThickness}
 						{useDefaultLabel}
 						{enableKeyboardShortcuts}
+						{selectedAnnotationId}
+						{focusSelectedOnly}
+						onClearSelection={clearAnnotationSelection}
 						src={value.image.url}
 					/>
 				</div>
@@ -264,7 +303,16 @@
 					{:else}
 						<ul class="annotation-list">
 							{#each annotationItems as item}
-								<li class="annotation-item">
+								<li
+									class="annotation-item"
+									class:annotation-item--selected={item.isSelected}
+									role="button"
+									tabindex="0"
+									on:click={() =>
+										toggleAnnotationSelection(item)}
+									on:keydown={(event) =>
+										handleAnnotationKeydown(event, item)}
+								>
 									<div class="annotation-item__title">
 										<span
 											class="annotation-item__swatch"
@@ -354,6 +402,21 @@
 		flex-direction: column;
 		gap: var(--spacing-xs);
 		font-size: var(--text-sm);
+		cursor: pointer;
+		transition:
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+	.annotation-item--selected {
+		border-color: var(--color-accent);
+		box-shadow: 0 0 0 1px
+			color-mix(in srgb, var(--color-accent) 55%, transparent);
+	}
+
+	.annotation-item:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
 	}
 
 	.annotation-item__title {

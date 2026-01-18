@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { resolve_wasm_src } from "@gradio/wasm/svelte";
 	import type { HTMLImgAttributes } from "svelte/elements";
-    import { createEventDispatcher } from "svelte";
-	import Canvas from "./Canvas.svelte"
+	import { createEventDispatcher } from "svelte";
+	import Canvas from "./Canvas.svelte";
 	import AnnotatedImageData from "./AnnotatedImageData";
 
 	interface Props extends HTMLImgAttributes {
@@ -27,6 +27,9 @@
 	export let handlesCursor: boolean;
 	export let useDefaultLabel: boolean;
 	export let enableKeyboardShortcuts: boolean;
+	export let selectedAnnotationId: string | null = null;
+	export let focusSelectedOnly: boolean = false;
+	export let onClearSelection: (() => void) | null = null;
 
 	let resolved_src: typeof src;
 
@@ -54,7 +57,6 @@
 	const dispatch = createEventDispatcher<{
 		change: undefined;
 	}>();
-
 </script>
 
 <Canvas
@@ -76,5 +78,8 @@
 	{handlesCursor}
 	{useDefaultLabel}
 	{enableKeyboardShortcuts}
+	{selectedAnnotationId}
+	{focusSelectedOnly}
+	{onClearSelection}
 	imageUrl={resolved_src}
 />

@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from "svelte";
-	import { BoundingBox, Point, Hand, Trash, Label } from "./icons/index";
+	import {
+		BoundingBox,
+		Point,
+		Hand,
+		Trash,
+		Label,
+		Clear,
+	} from "./icons/index";
 	import ModalBox from "./ModalBox.svelte";
 	import Box from "./Box";
 	import PointShape from "./Point";
@@ -33,6 +40,9 @@
 	export let handlesCursor: boolean = true;
 	export let useDefaultLabel: boolean = false;
 	export let enableKeyboardShortcuts: boolean = true;
+	export let selectedAnnotationId: string | null = null;
+	export let focusSelectedOnly: boolean = false;
+	export let onClearSelection: (() => void) | null = null;
 
 	if (showRemoveButton === null) {
 		showRemoveButton = disableEditBoxes;
@@ -97,6 +107,94 @@
 		distance: 0,
 	};
 	const touchScaleDeadzone = 100;
+	let selectedInfo: { type: "box" | "point"; index: number } | null = null;
+	let lastSelectedAnnotationId: string | null = null;
+
+	function parseSelectedAnnotationId(
+		id: string | null,
+		data: AnnotatedImageData,
+	) {
+		if (!id) {
+			return null;
+		}
+		const [typeValue, indexValue] = id.split("-");
+		const index = Number(indexValue);
+		if (!Number.isInteger(index) || index < 0) {
+			return null;
+		}
+		if (typeValue === "box") {
+			return index < data.boxes.length
+				? { type: "box" as const, index }
+				: null;
+		}
+		if (typeValue === "point") {
+			return index < data.points.length
+				? { type: "point" as const, index }
+				: null;
+		}
+		return null;
+	}
+
+	function getVisibleBoxEntries() {
+		if (!value) {
+			return [] as { box: Box; index: number }[];
+		}
+		if (focusSelectedOnly) {
+			if (selectedInfo?.type === "box") {
+				const box = value.boxes[selectedInfo.index];
+				return box ? [{ box, index: selectedInfo.index }] : [];
+			}
+			return [];
+		}
+		return value.boxes.map((box, index) => ({ box, index }));
+	}
+
+	function getVisiblePointEntries() {
+		if (!value) {
+			return [] as { point: PointShape; index: number }[];
+		}
+		if (focusSelectedOnly) {
+			if (selectedInfo?.type === "point") {
+				const point = value.points[selectedInfo.index];
+				return point ? [{ point, index: selectedInfo.index }] : [];
+			}
+			return [];
+		}
+		return value.points.map((point, index) => ({ point, index }));
+	}
+
+	$: {
+		if (!value) {
+			selectedInfo = null;
+			lastSelectedAnnotationId = null;
+		} else {
+			selectedInfo = parseSelectedAnnotationId(
+				selectedAnnotationId,
+				value,
+			);
+			const selectionChanged =
+				selectedAnnotationId !== lastSelectedAnnotationId;
+			if (selectedInfo) {
+				if (selectedInfo.type === "box") {
+					if (
+						selectedTarget !== "box" ||
+						selectedBox !== selectedInfo.index
+					) {
+						selectBox(selectedInfo.index);
+					}
+				} else if (
+					selectedTarget !== "point" ||
+					selectedPoint !== selectedInfo.index
+				) {
+					selectPoint(selectedInfo.index);
+				}
+				if (selectionChanged && mode !== Mode.drag) {
+					setDragMode();
+				}
+			}
+			lastSelectedAnnotationId = selectedAnnotationId;
+		}
+	}
 
 	const dispatch = createEventDispatcher<{
 		change: undefined;
@@ -150,11 +248,13 @@
 				ctx.restore();
 			}
 
-			for (const box of value.boxes.slice().reverse()) {
+			const visibleBoxes = getVisibleBoxEntries().slice().reverse();
+			for (const { box } of visibleBoxes) {
 				box.render(ctx);
 			}
 
-			for (const point of value.points.slice().reverse()) {
+			const visiblePoints = getVisiblePointEntries().slice().reverse();
+			for (const { point } of visiblePoints) {
 				point.render(ctx);
 			}
 		}
@@ -253,21 +353,21 @@
 		let selectedBoxFlag = false;
 
 		// Check if the mouse is over any of the resizing handles
-		for (const [i, box] of value.boxes.entries()) {
+		for (const { box, index } of getVisibleBoxEntries()) {
 			const handleIndex = box.indexOfPointInsideHandle(mouseX, mouseY);
 			if (handleIndex >= 0) {
 				selectedBoxFlag = true;
-				selectBox(i);
+				selectBox(index);
 				box.startResize(handleIndex, event);
 				return true;
 			}
 		}
 
 		// Check if the mouse is inside a box
-		for (const [i, box] of value.boxes.entries()) {
+		for (const { box, index } of getVisibleBoxEntries()) {
 			if (box.isPointInsideBox(mouseX, mouseY)) {
 				selectedBoxFlag = true;
-				selectBox(i);
+				selectBox(index);
 				box.startDrag(event);
 				return true;
 			}
@@ -327,7 +427,7 @@
 			const mouseX = event.clientX - rect.left;
 			const mouseY = event.clientY - rect.top;
 
-			for (const [_, box] of value.boxes.entries()) {
+			for (const { box } of getVisibleBoxEntries()) {
 				const handleIndex = box.indexOfPointInsideHandle(
 					mouseX,
 					mouseY,
@@ -603,9 +703,9 @@
 		const rect = canvas.getBoundingClientRect();
 		const mouseX = event.clientX - rect.left;
 		const mouseY = event.clientY - rect.top;
-		for (const [i, point] of value.points.entries()) {
+		for (const { point, index } of getVisiblePointEntries()) {
 			if (point.isPointInsidePoint(mouseX, mouseY)) {
-				selectPoint(i);
+				selectPoint(index);
 				point.startDrag(event);
 				return;
 			}
@@ -631,6 +731,20 @@
 	function setDragMode() {
 		mode = Mode.drag;
 		canvas.style.cursor = "default";
+	}
+
+	function handleClearSelection() {
+		onClearSelection?.();
+		selectedAnnotationId = null;
+		focusSelectedOnly = false;
+		selectedInfo = null;
+		lastSelectedAnnotationId = null;
+		selectedTarget = null;
+		selectedBox = -1;
+		selectedPoint = -1;
+		value?.boxes.forEach((box) => box.setSelected(false));
+		value?.points.forEach((point) => point.setSelected(false));
+		draw();
 	}
 
 	function onBoxFinishCreation() {
@@ -1095,6 +1209,15 @@
 				title="Drag boxes (D)"
 				on:click={() => setDragMode()}><Hand /></button
 			>
+			<button
+				class="icon"
+				aria-label="Clear selection"
+				title="Clear selection"
+				on:click={handleClearSelection}
+				disabled={!selectedAnnotationId}
+			>
+				<Clear />
+			</button>
 			{#if showRemoveButton}
 				<button
 					class="icon"
@@ -1195,6 +1318,19 @@
 		padding: var(--spacing-xs);
 		color: var(--neutral-400);
 		border-radius: var(--radius-md);
+		border: none;
+		background: transparent;
+		cursor: pointer;
+	}
+
+	.icon:disabled {
+		opacity: 0.45;
+		cursor: default;
+	}
+
+	.icon:disabled:hover,
+	.icon:disabled:focus {
+		color: var(--neutral-400);
 	}
 
 	.icon:hover,
