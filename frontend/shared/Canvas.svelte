@@ -407,7 +407,7 @@
 		}
 
 		const key = event.key.toLowerCase();
-		const blockedKeys = new Set(["delete", "c", "d", "e", "p", " "]);
+		const blockedKeys = new Set(["delete", "b", "d", "e", "p", " "]);
 
 		if (blockedKeys.has(key)) {
 			event.preventDefault();
@@ -418,7 +418,7 @@
 			case "delete":
 				onDeleteBox();
 				break;
-			case "c":
+			case "b":
 				setCreateMode();
 				break;
 			case "p":

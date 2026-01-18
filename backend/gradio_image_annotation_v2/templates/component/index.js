@@ -9535,11 +9535,11 @@ function cp(i, e, t) {
     if (!L || k.target !== I || !_)
       return;
     const W = k.key.toLowerCase();
-    switch ((/* @__PURE__ */ new Set(["delete", "c", "d", "e", "p", " "])).has(W) && (k.preventDefault(), k.stopPropagation()), W) {
+    switch ((/* @__PURE__ */ new Set(["delete", "b", "d", "e", "p", " "])).has(W) && (k.preventDefault(), k.stopPropagation()), W) {
       case "delete":
         Tt();
         break;
-      case "c":
+      case "b":
         Fe();
         break;
       case "p":

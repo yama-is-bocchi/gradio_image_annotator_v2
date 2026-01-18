@@ -103,7 +103,8 @@ with gr.Blocks() as demo:
 
     with gr.Accordion("Keyboard Shortcuts"):
         gr.Markdown("""
-        - ``C``: Create mode
+        - ``B``: Create box
+        - ``P``: Create point
         - ``D``: Drag mode
         - ``E``: Edit selected box (same as double-click a box)
         - ``Delete``: Remove selected box
