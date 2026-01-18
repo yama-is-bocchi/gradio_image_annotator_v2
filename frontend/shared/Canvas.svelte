@@ -462,6 +462,21 @@
 		canvasWindow.offsetX = mouseX - worldX * newScale;
 		canvasWindow.offsetY = mouseY - worldY * newScale;
 
+		if (value !== null) {
+			for (const box of value.boxes) {
+				if (box.isDragging) {
+					box.offsetMouseX = event.clientX - box._xmin * newScale;
+					box.offsetMouseY = event.clientY - box._ymin * newScale;
+				}
+			}
+			for (const point of value.points) {
+				if (point.isDragging) {
+					point.offsetMouseX = event.clientX - point._x * newScale;
+					point.offsetMouseY = event.clientY - point._y * newScale;
+				}
+			}
+		}
+
 		canvasWindow.scale = newScale;
 		draw();
 	}
