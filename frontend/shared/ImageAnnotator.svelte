@@ -303,29 +303,33 @@
 					{:else}
 						<ul class="annotation-list">
 							{#each annotationItems as item}
-								<li
-									class="annotation-item"
-									class:annotation-item--selected={item.isSelected}
-									role="button"
-									tabindex="0"
-									on:click={() =>
-										toggleAnnotationSelection(item)}
-									on:keydown={(event) =>
-										handleAnnotationKeydown(event, item)}
-								>
-									<div class="annotation-item__title">
-										<span
-											class="annotation-item__swatch"
-											style={`background-color: ${item.color};`}
-										></span>
-										{item.label}
-									</div>
-									<div class="annotation-item__meta">
-										Shape: {item.shape}
-									</div>
-									<div class="annotation-item__coords">
-										Coords: {item.coords}
-									</div>
+								<li class="annotation-item">
+									<button
+										type="button"
+										class="annotation-item__button"
+										class:annotation-item__button--selected={item.isSelected}
+										on:click={() =>
+											toggleAnnotationSelection(item)}
+										on:keydown={(event) =>
+											handleAnnotationKeydown(
+												event,
+												item,
+											)}
+									>
+										<div class="annotation-item__title">
+											<span
+												class="annotation-item__swatch"
+												style={`background-color: ${item.color};`}
+											></span>
+											{item.label}
+										</div>
+										<div class="annotation-item__meta">
+											Shape: {item.shape}
+										</div>
+										<div class="annotation-item__coords">
+											Coords: {item.coords}
+										</div>
+									</button>
 								</li>
 							{/each}
 						</ul>
@@ -394,6 +398,10 @@
 	}
 
 	.annotation-item {
+		list-style: none;
+	}
+
+	.annotation-item__button {
 		border-radius: var(--radius-md);
 		padding: var(--spacing-md);
 		border: 1px solid transparent;
@@ -403,22 +411,23 @@
 		gap: var(--spacing-xs);
 		font-size: var(--text-sm);
 		cursor: pointer;
+		width: 100%;
+		text-align: left;
 		transition:
 			border-color 0.2s ease,
 			box-shadow 0.2s ease;
 	}
 
-	.annotation-item--selected {
+	.annotation-item__button--selected {
 		border-color: var(--color-accent);
 		box-shadow: 0 0 0 1px
 			color-mix(in srgb, var(--color-accent) 55%, transparent);
 	}
 
-	.annotation-item:focus-visible {
+	.annotation-item__button:focus-visible {
 		outline: 2px solid var(--color-accent);
 		outline-offset: 2px;
 	}
-
 	.annotation-item__title {
 		font-weight: 600;
 		display: flex;
