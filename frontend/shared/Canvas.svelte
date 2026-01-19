@@ -699,10 +699,6 @@
 			return;
 		}
 
-		if (!singleBox) {
-			selectBox(-1);
-		}
-
 		const rect = canvas.getBoundingClientRect();
 		const mouseX = event.clientX - rect.left;
 		const mouseY = event.clientY - rect.top;
@@ -714,8 +710,9 @@
 			}
 		}
 
-		if (!singleBox) {
-			selectPoint(-1);
+		const preserveSelection = focusSelectedOnly || selectedAnnotationId;
+		if (!singleBox && !preserveSelection) {
+			handleClearSelection();
 		}
 
 		canvasWindow.startDrag(event);
