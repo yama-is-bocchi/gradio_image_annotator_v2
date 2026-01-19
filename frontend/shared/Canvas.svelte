@@ -59,6 +59,14 @@
 	let pointersCache: Map<number, PointerEvent> = new Map();
 	let canvasWindow: WindowViewer = new WindowViewer(draw, pointersCache);
 
+	$: if (canvas) {
+		if (mode === Mode.creation || mode === Mode.point) {
+			canvas.style.cursor = "crosshair";
+		} else {
+			canvas.style.cursor = "default";
+		}
+	}
+
 	if (value !== null && value.boxes.length == 0 && value.points.length == 0) {
 		mode = Mode.creation;
 	}
