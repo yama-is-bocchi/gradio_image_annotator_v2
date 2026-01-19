@@ -563,6 +563,14 @@
 			return;
 		}
 
+		const isResizing =
+			value?.boxes?.some((box) => box.isResizing || box.isCreating) ??
+			false;
+		if (isResizing) {
+			event.preventDefault();
+			return;
+		}
+
 		event.preventDefault();
 		const delta = 1 / (1 + (event.deltaY / 1000) * 0.5);
 
