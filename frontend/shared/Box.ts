@@ -34,7 +34,6 @@ export default class Box {
   offsetMouseY: number;
   resizeHandleSize: number;
   resizingHandleIndex: number;
-  minSize: number;
   renderCallBack: () => void;
   onFinishCreation: () => void;
   canvasXmin: number;
@@ -72,7 +71,6 @@ export default class Box {
     ymax: number,
     color = "rgb(255, 255, 255)",
     alpha = 0.5,
-    minSize = 25,
     handleSize = 8,
     thickness = 2,
     selectedThickness = 4,
@@ -107,7 +105,6 @@ export default class Box {
     this.selectedThickness = selectedThickness;
     this.updateHandles();
     this.resizingHandleIndex = -1;
-    this.minSize = minSize;
     this.color = color;
     this.alpha = alpha;
     this.creatingAnchorX = "xmin";

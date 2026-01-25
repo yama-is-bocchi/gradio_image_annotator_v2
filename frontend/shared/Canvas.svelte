@@ -25,7 +25,6 @@
 	export let imageUrl: string | null = null;
 	export let interactive: boolean;
 	export let boxAlpha = 0.5;
-	export let boxMinSize = 10;
 	export let handleSize: number;
 	export let boxThickness: number;
 	export let boxSelectedThickness: number;
@@ -644,7 +643,6 @@
 			y,
 			color,
 			boxAlpha,
-			boxMinSize,
 			handleSize,
 			boxThickness,
 			boxSelectedThickness,
@@ -1099,7 +1097,6 @@
 					rawBox["ymax"] as number,
 					color,
 					boxAlpha,
-					boxMinSize,
 					handleSize,
 					boxThickness,
 					boxSelectedThickness,

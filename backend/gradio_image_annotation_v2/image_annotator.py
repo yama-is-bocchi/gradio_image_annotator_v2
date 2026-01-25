@@ -58,7 +58,6 @@ class image_annotator(Component):
         boxes_alpha: float = 0.5,
         label_list: list[str] = [],
         label_colors: list[str] = [],
-        box_min_size: int = 10,
         handle_size: int = 8,
         box_thickness: int = 2,
         box_selected_thickness: int = 4,
@@ -99,7 +98,6 @@ class image_annotator(Component):
             boxes_alpha: Opacity of the bounding boxes 0 and 1.
             label_list: List of valid labels.
             label_colors: Optional list of colors for each label when `label_list` is used. Colors must be a tuple of RGB values (e.g. `(255,255,255)`).
-            box_min_size: Minimum valid bounding box size.
             handle_size: Size of the bounding box resize handles.
             box_thickness: Thickness of the bounding box outline.
             box_selected_thickness: Thickness of the bounding box outline when it is selected.
@@ -165,7 +163,6 @@ class image_annotator(Component):
         self.enable_keyboard_shortcuts = enable_keyboard_shortcuts
 
         self.boxes_alpha = boxes_alpha
-        self.box_min_size = box_min_size
         self.handle_size = handle_size
         self.box_thickness = box_thickness
         self.box_selected_thickness = box_selected_thickness

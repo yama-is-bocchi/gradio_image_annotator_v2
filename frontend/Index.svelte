@@ -41,7 +41,6 @@
 	export let boxes_alpha: number;
 	export let label_list: string[];
 	export let label_colors: string[];
-	export let box_min_size: number;
 	export let handle_size: number;
 	export let box_thickness: number;
 	export let box_selected_thickness: number;
@@ -103,7 +102,6 @@
 		{width}
 		labelList={label_list}
 		labelColors={label_colors}
-		boxMinSize={box_min_size}
 		on:edit={() => gradio.dispatch("edit")}
 		on:clear={() => {
 			gradio.dispatch("clear");
