@@ -16,15 +16,17 @@
     export let labelDetailLock = false;
 
     // NOTE:
-    // onMount() より前に label/color を current* に反映しないと、
-    // Dropdown が初期値（choices[0]）で初期化→change 発火→
-    // 「編集したいアノテーションのラベルではなく先頭ラベルになる」
-    // という現象が起きることがある。
-    let initializedFromProps = false;
-    $: if (!initializedFromProps) {
+    // 編集モーダル表示直後に親側の選択状態が更新されると、
+    // ModalBox が一瞬 "" のまま初期化され、Dropdown が choices[0] を選んでしまうことがある。
+    // その後 label props が正しい値に更新されても、内部 state を同期しないと
+    // 「ダブルクリックした対象ではなく先頭ラベルになる」現象が起きる。
+    //
+    // 対策: ユーザーがまだ操作していない間は、props(label/color) を current* に追従させる。
+    // 操作が始まったら上書きしない。
+    let userInteracted = false;
+    $: if (!userInteracted) {
         currentLabel = label;
         currentColor = color;
-        initializedFromProps = true;
     }
 
     const dispatch = createEventDispatcher<{
@@ -41,6 +43,7 @@
     }
 
     function onDropDownChange(event) {
+        userInteracted = true;
         const { detail } = event;
         let choice = detail;
 
@@ -57,6 +60,7 @@
     }
 
     function onColorChange(event) {
+        userInteracted = true;
         const { detail } = event;
         currentColor = detail;
     }
