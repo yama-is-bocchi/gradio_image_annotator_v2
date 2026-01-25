@@ -178,6 +178,13 @@
 		}
 	}
 
+	function handleAnnotationClick(event: MouseEvent, item: AnnotationItem) {
+		// ダブルクリックだと click が2回発生し、選択トグルが「選択→解除」になってしまう。
+		// ここでは単クリック（detail===1）のみを選択トグル対象にする。
+		if (event.detail !== 1) return;
+		toggleAnnotationSelection(item);
+	}
+
 	function clearAnnotationSelection() {
 		selectedAnnotationId = null;
 		focusSelectedOnly = false;
@@ -308,8 +315,8 @@
 										type="button"
 										class="annotation-item__button"
 										class:annotation-item__button--selected={item.isSelected}
-										on:click={() =>
-											toggleAnnotationSelection(item)}
+										on:click={(event) =>
+											handleAnnotationClick(event, item)}
 										on:keydown={(event) =>
 											handleAnnotationKeydown(
 												event,
@@ -433,6 +440,7 @@
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-xs);
+		user-select: none;
 	}
 
 	.annotation-item__swatch {

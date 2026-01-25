@@ -1,36 +1,48 @@
 <script lang="ts">
-	import { BaseColorPicker } from "@gradio/colorpicker";
+    import { BaseColorPicker } from "@gradio/colorpicker";
     import { BaseButton } from "@gradio/button";
     import { BaseDropdown } from "./patched_dropdown/Index.svelte";
-	import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher } from "svelte";
     import { onMount } from "svelte";
     import { Lock, Unlock } from "./icons/index";
 
     export let label = "";
     export let currentLabel = "";
-    export let choices = [];  // [(label, i)]
+    export let choices = []; // [(label, i)]
     export let choicesColors = [];
     export let color = "";
     export let currentColor = "";
     export let showRemove = true;
     export let labelDetailLock = false;
 
+    // NOTE:
+    // onMount() より前に label/color を current* に反映しないと、
+    // Dropdown が初期値（choices[0]）で初期化→change 発火→
+    // 「編集したいアノテーションのラベルではなく先頭ラベルになる」
+    // という現象が起きることがある。
+    let initializedFromProps = false;
+    $: if (!initializedFromProps) {
+        currentLabel = label;
+        currentColor = color;
+        initializedFromProps = true;
+    }
+
     const dispatch = createEventDispatcher<{
-		change: object;
-	}>();
+        change: object;
+    }>();
 
     function dispatchChange(ret: number) {
         dispatch("change", {
             label: currentLabel,
             color: currentColor,
             lock: labelDetailLock,
-            ret: ret // -1: remove, 0: cancel, 1: change
+            ret: ret, // -1: remove, 0: cancel, 1: change
         });
     }
 
     function onDropDownChange(event) {
         const { detail } = event;
-		let choice = detail;
+        let choice = detail;
 
         if (Number.isInteger(choice)) {
             if (Array.isArray(choicesColors) && choice < choicesColors.length) {
@@ -46,7 +58,7 @@
 
     function onColorChange(event) {
         const { detail } = event;
-		currentColor = detail;
+        currentColor = detail;
     }
 
     function onDropDownEnter(event) {
@@ -59,41 +71,40 @@
     }
 
     function handleKeyPress(event: KeyboardEvent) {
-		switch (event.key.toLowerCase()) {
-			case "enter":
+        switch (event.key.toLowerCase()) {
+            case "enter":
                 dispatchChange(1);
-				break;
+                break;
             case "escape":
                 dispatchChange(0);
-				break;
-		}
-	}
+                break;
+        }
+    }
 
-	onMount(() => {
-		document.addEventListener("keydown", handleKeyPress);
-        currentLabel = label;
-        currentColor = color;
+    onMount(() => {
+        document.addEventListener("keydown", handleKeyPress);
 
         return () => {
             document.removeEventListener("keydown", handleKeyPress);
         };
-	});
-
+    });
 </script>
 
 <div class="modal" id="model-box-edit">
     <div class="modal-container">
         <span class="model-content">
             {#if !showRemove}
-            <div style="margin-right: 8px;">
-                <button
-                class="icon"
-                class:selected={labelDetailLock === true}
-                aria-label="Lock label detail"
-                on:click={onLockClick}>
-                {#if labelDetailLock}<Lock/>{:else}<Unlock/>{/if}</button
-                >
-            </div>
+                <div style="margin-right: 8px;">
+                    <button
+                        class="icon"
+                        class:selected={labelDetailLock === true}
+                        aria-label="Lock label detail"
+                        on:click={onLockClick}
+                    >
+                        {#if labelDetailLock}<Lock />{:else}<Unlock
+                            />{/if}</button
+                    >
+                </div>
             {/if}
             <div style="margin-right: 10px;">
                 <BaseDropdown
@@ -115,23 +126,22 @@
                 />
             </div>
             <div style="margin-right: 8px;">
-                <BaseButton
-                on:click={() => dispatchChange(0)}
-                >Cancel</BaseButton>
+                <BaseButton on:click={() => dispatchChange(0)}
+                    >Cancel</BaseButton
+                >
             </div>
             {#if showRemove}
                 <div style="margin-right: 8px;">
                     <BaseButton
                         variant="stop"
-                        on:click={() => dispatchChange(-1)}
-                    >Remove</BaseButton>
+                        on:click={() => dispatchChange(-1)}>Remove</BaseButton
+                    >
                 </div>
             {/if}
             <div>
-                <BaseButton
-                    variant="primary"
-                    on:click={() => dispatchChange(1)}
-                >OK</BaseButton>
+                <BaseButton variant="primary" on:click={() => dispatchChange(1)}
+                    >OK</BaseButton
+                >
             </div>
         </span>
     </div>
@@ -171,19 +181,19 @@
     }
 
     .icon {
-		width: 22px;
-		height: 22px;
-		margin: var(--spacing-lg) var(--spacing-xs);
-		padding: var(--spacing-xs);
-		color: var(--neutral-400);
-		border-radius: var(--radius-md);
-	}
+        width: 22px;
+        height: 22px;
+        margin: var(--spacing-lg) var(--spacing-xs);
+        padding: var(--spacing-xs);
+        color: var(--neutral-400);
+        border-radius: var(--radius-md);
+    }
 
-    .icon:hover{
-		color: var(--color-accent);
-	}
+    .icon:hover {
+        color: var(--color-accent);
+    }
 
     .selected {
-		color: var(--color-accent);
-	}
+        color: var(--color-accent);
+    }
 </style>
