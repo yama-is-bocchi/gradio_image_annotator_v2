@@ -36,7 +36,7 @@
 	export let width: number | string = "100%";
 	export let singleBox: boolean = false;
 	export let showRemoveButton: boolean = null;
-	export let handlesCursor: boolean = true;
+	export let handlesCursor: boolean | null = true;
 	export let useDefaultLabel: boolean = false;
 	export let enableKeyboardShortcuts: boolean = true;
 	export let selectedAnnotationId: string | null = null;
@@ -47,6 +47,12 @@
 		showRemoveButton = disableEditBoxes;
 	}
 
+	// NOTE:
+	// `handlesCursor` は外部から渡される可能性がある props ですが、
+	// このコンポーネント内で参照しないと「unused export property」警告になります。
+	// ここで参照だけして警告を抑止します（挙動は変えません）。
+	$: handlesCursor;
+
 	let canvas: HTMLCanvasElement;
 	let annotatorContainerDiv: HTMLDivElement;
 	let ctx: CanvasRenderingContext2D;
@@ -55,14 +61,57 @@
 	let selectedPoint = -1;
 	let selectedTarget: "box" | "point" | null = null;
 	let mode: Mode = Mode.creation;
+	let isMouseDragging = false;
+	let isMouseResizing = false;
+	let activeResizeCursor: string | null = null;
 	let pointersCache: Map<number, PointerEvent> = new Map();
 	let canvasWindow: WindowViewer = new WindowViewer(draw, pointersCache);
 
-	$: if (canvas) {
+	function setCursorBasedOnMode() {
+		if (!canvas) return;
 		if (mode === Mode.creation || mode === Mode.point) {
 			canvas.style.cursor = "crosshair";
 		} else {
 			canvas.style.cursor = "default";
+		}
+	}
+
+	function startMouseDragCursor() {
+		if (!canvas) return;
+		isMouseDragging = true;
+		canvas.style.cursor = "grabbing";
+	}
+
+	function startMouseResizeCursor(cursor: string) {
+		if (!canvas) return;
+		isMouseResizing = true;
+		activeResizeCursor = cursor;
+		canvas.style.cursor = cursor;
+	}
+
+	function stopMouseDragCursor() {
+		if (!canvas) return;
+		isMouseDragging = false;
+		setCursorBasedOnMode();
+	}
+
+	function stopMouseResizeCursor() {
+		if (!canvas) return;
+		isMouseResizing = false;
+		activeResizeCursor = null;
+		setCursorBasedOnMode();
+	}
+
+	$: if (canvas) {
+		// マウス押下中のカーソルを優先
+		// - リサイズ中: ハンドル方向の矢印カーソルを固定
+		// - ドラッグ/パン中: grabbing
+		if (isMouseResizing) {
+			canvas.style.cursor = activeResizeCursor ?? "default";
+		} else if (isMouseDragging) {
+			canvas.style.cursor = "grabbing";
+		} else {
+			setCursorBasedOnMode();
 		}
 	}
 
@@ -366,6 +415,11 @@
 				selectedBoxFlag = true;
 				selectBox(index);
 				box.startResize(handleIndex, event);
+				if (event.pointerType === "mouse") {
+					startMouseResizeCursor(
+						box.resizeHandles[handleIndex].cursor,
+					);
+				}
 				return true;
 			}
 		}
@@ -376,6 +430,9 @@
 				selectedBoxFlag = true;
 				selectBox(index);
 				box.startDrag(event);
+				if (event.pointerType === "mouse") {
+					startMouseDragCursor();
+				}
 				return true;
 			}
 		}
@@ -396,6 +453,10 @@
 			pointCreationPending = false;
 			onPointFinishCreation();
 		}
+		if (event.pointerType === "mouse") {
+			stopMouseResizeCursor();
+			stopMouseDragCursor();
+		}
 		dispatch("change");
 	}
 
@@ -408,6 +469,10 @@
 		if (canvasWindow.isDragging) {
 			canvasWindow.stopDrag();
 		}
+		if (event.pointerType === "mouse") {
+			stopMouseResizeCursor();
+			stopMouseDragCursor();
+		}
 		dispatch("change");
 	}
 
@@ -418,7 +483,12 @@
 
 		event.preventDefault();
 		if (event.pointerType === "mouse") {
-			if (!handlesCursor) {
+			if (isMouseResizing) {
+				canvas.style.cursor = activeResizeCursor ?? "default";
+				return;
+			}
+			if (isMouseDragging) {
+				canvas.style.cursor = "grabbing";
 				return;
 			}
 
@@ -434,13 +504,29 @@
 			const mouseX = event.clientX - rect.left;
 			const mouseY = event.clientY - rect.top;
 
+			// リサイズ可能箇所（ハンドル）に来たら、方向に応じた *-resize カーソルを表示
+			// NOTE: handlesCursor の値に関わらず、ドラッグモードではユーザーが
+			// どこでリサイズできるか分かるようにカーソルを出す
 			for (const { box } of getVisibleBoxEntries()) {
+				// オフセット/スケール変更直後でも hit-test がズレないように最新化
+				box.updateOffset();
 				const handleIndex = box.indexOfPointInsideHandle(
 					mouseX,
 					mouseY,
 				);
 				if (handleIndex >= 0) {
 					canvas.style.cursor = box.resizeHandles[handleIndex].cursor;
+					return;
+				}
+			}
+
+			// ドラッグモード中は、ボックス上にホバーしたら手（grab）を表示
+			for (const { box } of getVisibleBoxEntries()) {
+				// 念のため最新化（上のループで更新済みのケースが多いが、focusSelectedOnly等で
+				// ループ対象が変わる可能性があるため）
+				box.updateOffset();
+				if (box.isPointInsideBox(mouseX, mouseY)) {
+					canvas.style.cursor = "grab";
 					return;
 				}
 			}
@@ -720,6 +806,9 @@
 			if (point.isPointInsidePoint(mouseX, mouseY)) {
 				selectPoint(index);
 				point.startDrag(event);
+				if (event.pointerType === "mouse") {
+					startMouseDragCursor();
+				}
 				return;
 			}
 		}
@@ -730,6 +819,9 @@
 		}
 
 		canvasWindow.startDrag(event);
+		if (event.pointerType === "mouse") {
+			startMouseDragCursor();
+		}
 	}
 
 	function clearFocusSelection() {
@@ -750,20 +842,20 @@
 	function setCreateMode() {
 		clearFocusSelection();
 		mode = Mode.creation;
-		canvas.style.cursor = "crosshair";
+		stopMouseDragCursor();
 		draw();
 	}
 
 	function setPointMode() {
 		clearFocusSelection();
 		mode = Mode.point;
-		canvas.style.cursor = "crosshair";
+		stopMouseDragCursor();
 		draw();
 	}
 
 	function setDragMode() {
 		mode = Mode.drag;
-		canvas.style.cursor = "default";
+		stopMouseDragCursor();
 		draw();
 	}
 

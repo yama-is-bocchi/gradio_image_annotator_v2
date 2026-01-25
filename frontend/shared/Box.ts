@@ -149,7 +149,7 @@ export default class Box {
         ymin: this.ymin - halfSize,
         xmax: this.xmin + halfSize,
         ymax: this.ymin + halfSize,
-        cursor: "nwse-resize",
+        cursor: "nw-resize",
       },
       {
         // Top right
@@ -157,7 +157,7 @@ export default class Box {
         ymin: this.ymin - halfSize,
         xmax: this.xmax + halfSize,
         ymax: this.ymin + halfSize,
-        cursor: "nesw-resize",
+        cursor: "ne-resize",
       },
       {
         // Bottom right
@@ -165,7 +165,7 @@ export default class Box {
         ymin: this.ymax - halfSize,
         xmax: this.xmax + halfSize,
         ymax: this.ymax + halfSize,
-        cursor: "nwse-resize",
+        cursor: "se-resize",
       },
       {
         // Bottom left
@@ -173,7 +173,7 @@ export default class Box {
         ymin: this.ymax - halfSize,
         xmax: this.xmin + halfSize,
         ymax: this.ymax + halfSize,
-        cursor: "nesw-resize",
+        cursor: "sw-resize",
       },
       {
         // Top center
@@ -181,7 +181,7 @@ export default class Box {
         ymin: this.ymin - halfSize,
         xmax: this.xmin + width / 2 + halfSize,
         ymax: this.ymin + halfSize,
-        cursor: "ns-resize",
+        cursor: "n-resize",
       },
       {
         // Right center
@@ -189,7 +189,7 @@ export default class Box {
         ymin: this.ymin + height / 2 - halfSize,
         xmax: this.xmax + halfSize,
         ymax: this.ymin + height / 2 + halfSize,
-        cursor: "ew-resize",
+        cursor: "e-resize",
       },
       {
         // Bottom center
@@ -197,7 +197,7 @@ export default class Box {
         ymin: this.ymax - halfSize,
         xmax: this.xmin + width / 2 + halfSize,
         ymax: this.ymax + halfSize,
-        cursor: "ns-resize",
+        cursor: "s-resize",
       },
       {
         // Left center
@@ -205,7 +205,7 @@ export default class Box {
         ymin: this.ymin + height / 2 - halfSize,
         xmax: this.xmin + halfSize,
         ymax: this.ymin + height / 2 + halfSize,
-        cursor: "ew-resize",
+        cursor: "w-resize",
       },
     ];
   }
