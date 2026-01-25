@@ -11,3 +11,4 @@ node_modules
 .vscode
 .venv
 .mypy_cache
+backend/gradio_image_annotation_v2/templates/
